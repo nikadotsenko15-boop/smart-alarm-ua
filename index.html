@@ -7,175 +7,371 @@
 <meta name="theme-color" content="#090911">
 <title>Smart Alarm UA</title>
 <style>
-:root{--bg:#090911;--card:#171725;--line:#302e45;--purple:#b5a0ff;--muted:#9b98b5}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#f8f7ff;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-main{max-width:460px;margin:auto;padding:30px 20px 45px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px}
-.brand{font-weight:800;font-size:18px}
-.logo{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,#c4b5fd,#7c3aed);color:#171025;margin-right:8px}
-.beta{font-size:10px;letter-spacing:1px;color:var(--purple);border:1px solid #55427a;border-radius:30px;padding:8px}
-.eyebrow{color:var(--purple);font-size:11px;letter-spacing:2px;text-transform:uppercase}
-h1{font-size:40px;line-height:1.08;letter-spacing:-1.5px;margin:12px 0}
-h1 span{color:var(--purple)}
-.muted{color:var(--muted);font-size:13px;line-height:1.6}
-.card{background:linear-gradient(145deg,#1b1a2b,#11111c);border:1px solid var(--line);border-radius:24px;padding:21px;margin-top:16px}
-.heading{font-size:18px;font-weight:750;margin-bottom:6px}
-.smalltitle{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.clock{font-size:clamp(48px,13vw,64px);font-weight:700;letter-spacing:-3px;margin:16px 0 4px;font-variant-numeric:tabular-nums}
-.divider{height:1px;background:var(--line);margin:20px 0}
-.status{display:flex;gap:12px;align-items:center}
-.icon{width:44px;height:44px;border-radius:15px;background:#29223d;display:grid;place-items:center;font-size:22px;flex-shrink:0}
-.status strong{display:block;font-size:13px;margin-bottom:5px}
-.status small{display:block;color:var(--muted);font-size:12px;line-height:1.5}
-label{display:block;font-size:12px;color:#d2cde5;margin:20px 0 9px}
-input[type=time],select{width:100%;padding:15px;border:1px solid #39364f;border-radius:13px;background:#0d0d17;color:white;font-size:17px}
-.alarmhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.pill{font-size:10px;border-radius:20px;padding:7px 9px;background:#2b2440;color:#c9b9ff}
-.pill.gold{background:#382d1c;color:#ffda9a}
-button{width:100%;border:0;border-radius:14px;padding:16px;margin-top:15px;font-weight:750;font-size:14px;background:linear-gradient(110deg,#c4b5fd,#9c7cff);color:#171025}
-button.secondary{background:#28263b;color:#eeeaff;border:1px solid #39364f}
-button:active{transform:scale(.99)}
-.toggle{display:flex;align-items:center;gap:10px;font-size:13px;color:#d5d1e6;margin-top:17px}
-.toggle input{width:20px;height:20px;accent-color:#a78bfa}
-.note{font-size:11px;line-height:1.65;color:#9290aa;margin-top:14px}
-footer{text-align:center;font-size:11px;color:#77748e;margin-top:27px}
+:root {
+  --bg:#090911;
+  --card:#171725;
+  --line:#302e45;
+  --purple:#b5a0ff;
+  --muted:#9b98b5;
+  --white:#f8f7ff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--white);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+}
+body:before {
+  content:"";
+  position:fixed;
+  width:280px;height:280px;
+  right:-130px;top:70px;
+  background:#7446ed;
+  filter:blur(120px);
+  opacity:.22;
+  pointer-events:none;
+}
+main {
+  position:relative;
+  max-width:460px;
+  margin:auto;
+  padding:calc(25px + env(safe-area-inset-top)) 20px calc(35px + env(safe-area-inset-bottom));
+}
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:36px;
+}
+.brand {
+  display:flex;align-items:center;gap:10px;
+  font-size:18px;font-weight:800;
+}
+.logo {
+  width:39px;height:39px;
+  border-radius:14px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#c4b5fd,#7c3aed);
+  color:#171025;font-size:23px;
+  box-shadow:0 5px 25px #8b5cf644;
+}
+.beta {
+  font-size:10px;letter-spacing:1px;
+  color:var(--purple);
+  border:1px solid #55427a;
+  border-radius:30px;padding:8px 10px;
+}
+.eyebrow {
+  color:var(--purple);font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;
+}
+h1 {
+  font-size:40px;line-height:1.08;
+  letter-spacing:-1.6px;margin:12px 0;
+}
+h1 span { color:var(--purple); }
+.muted { color:var(--muted);font-size:13px;line-height:1.6; }
+.card {
+  background:linear-gradient(145deg,#1b1a2b,#11111c);
+  border:1px solid var(--line);
+  border-radius:24px;padding:21px;margin-top:16px;
+  box-shadow:0 14px 40px #0002;
+}
+.heading { font-size:18px;font-weight:750;margin-bottom:6px; }
+.smalltitle {
+  font-size:11px;color:var(--muted);
+  letter-spacing:1.2px;text-transform:uppercase;
+}
+.clock {
+  font-size:clamp(48px,13vw,64px);
+  font-weight:700;letter-spacing:-3px;
+  margin:16px 0 4px;font-variant-numeric:tabular-nums;
+}
+.divider { height:1px;background:var(--line);margin:20px 0; }
+.status { display:flex;gap:12px;align-items:center; }
+.icon {
+  width:45px;height:45px;border-radius:15px;
+  background:#29223d;display:grid;place-items:center;
+  font-size:22px;flex-shrink:0;
+}
+.status strong { display:block;font-size:13px;margin-bottom:5px; }
+.status small { display:block;color:var(--muted);font-size:12px;line-height:1.5; }
+.alarmhead { display:flex;justify-content:space-between;align-items:center;gap:8px; }
+.pill { font-size:10px;border-radius:20px;padding:7px 9px;background:#2b2440;color:#c9b9ff;white-space:nowrap; }
+.pill.gold { background:#382d1c;color:#ffda9a; }
+label { display:block;font-size:12px;color:#d2cde5;margin:20px 0 9px; }
+input[type="time"],select {
+  width:100%;padding:15px;
+  border:1px solid #39364f;border-radius:13px;
+  background:#0d0d17;color:white;font-size:16px;
+}
+input[type="checkbox"] { width:19px;height:19px;accent-color:#a78bfa; }
+button {
+  width:100%;border:0;border-radius:14px;
+  padding:15px;margin-top:13px;
+  font-weight:750;font-size:14px;
+  background:linear-gradient(110deg,#c4b5fd,#9c7cff);
+  color:#171025;cursor:pointer;
+}
+button.secondary {
+  background:#28263b;color:#eeeaff;
+  border:1px solid #39364f;
+}
+button:active { transform:scale(.99); }
+.toggle {
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:#d5d1e6;margin-top:17px;
+}
+.soundinfo { font-size:11px;color:var(--muted);margin-top:9px;line-height:1.5; }
+.note { font-size:11px;line-height:1.7;color:#9290aa;margin-top:14px; }
+#message {
+  padding:12px;border-radius:12px;
+  background:#211d32;color:#d5c9ff;
+  font-size:12px;line-height:1.5;margin-top:15px;
+}
+footer { text-align:center;font-size:11px;color:#77748e;margin-top:27px; }
 </style>
 </head>
 <body>
 <main>
+
 <header>
-<div class="brand"><span class="logo">◈</span>Smart Alarm UA</div>
-<div class="beta">BETA · UA</div>
+  <div class="brand"><span class="logo">◈</span>Smart Alarm UA</div>
+  <div class="beta">BETA · UA</div>
 </header>
 
 <div class="eyebrow">Твій ранок. Твої правила.</div>
 <h1>Прокидайся<br><span>спокійніше.</span></h1>
-<p class="muted">Два будильники — більше контролю над твоїм ранком.</p>
+<p class="muted">Твій персональний будильник з урахуванням повітряних тривог.</p>
 
 <section class="card">
-<div class="smalltitle">Поточний час</div>
-<div class="clock" id="clock">--:--:--</div>
-<div class="muted" id="date"></div>
-<div class="divider"></div>
-<div class="status">
-<div class="icon">🛡️</div>
-<div>
-<strong id="alertTitle">Джерело тривог не підключене</strong>
-<small id="alertText">Після підключення API зможемо отримувати дані про тривоги.</small>
-</div>
-</div>
+  <div class="smalltitle">Поточний час</div>
+  <div class="clock" id="clock">--:--:--</div>
+  <div class="muted" id="date">Завантаження...</div>
+  <div class="divider"></div>
+  <div class="status">
+    <div class="icon">🛡️</div>
+    <div>
+      <strong>Джерело тривог не підключене</strong>
+      <small>Після налаштування API тут можна буде показувати актуальний статус тривоги.</small>
+    </div>
+  </div>
 </section>
 
 <section class="card">
-<div class="alarmhead">
-<div class="heading">💜 Розумний будильник</div>
-<span class="pill">№ 1</span>
-</div>
-<p class="muted">Планований час пробудження з урахуванням тривог.</p>
-<label for="smartTime">Бажаний час</label>
-<input id="smartTime" type="time" value="08:00">
-<p class="note">Задум: якщо тривога перешкоджає пробудженню, перенести його на 10 хвилин після відбою. Ця автоматизація ще не підключена.</p>
+  <div class="alarmhead">
+    <div class="heading">💜 Розумний будильник</div>
+    <span class="pill">№ 1</span>
+  </div>
+  <p class="muted">Запланований час пробудження з урахуванням тривог.</p>
+
+  <label for="smartTime">Час пробудження</label>
+  <input type="time" id="smartTime" value="08:00">
+
+  <label for="smartSound">Мелодія розумного будильника</label>
+  <select id="smartSound">
+    <option value="gentle">Gentle — Ніжний</option>
+    <option value="sunrise">Sunrise — Світанок</option>
+    <option value="classic">Classic — Класичний</option>
+    <option value="digital">Digital — Цифровий</option>
+    <option value="urgent">Urgent — Наполегливий</option>
+  </select>
+  <button class="secondary" id="previewSmart">♫ Прослухати мелодію</button>
+
+  <p class="note">Запланована функція: якщо тривога припадає на час пробудження, перенести його на 10 хвилин після відбою. Автоматичне перенесення ще не реалізоване.</p>
 </section>
 
 <section class="card">
-<div class="alarmhead">
-<div class="heading">🔔 Резервний будильник</div>
-<span class="pill gold">№ 2</span>
-</div>
-<p class="muted">Окремий час пробудження, який не залежить від статусу тривоги.</p>
-<label for="backupTime">Час резервного сигналу</label>
-<input id="backupTime" type="time" value="08:30">
-<label class="toggle">
-<input type="checkbox" id="backupEnabled" checked>
-Увімкнути резервний будильник
-</label>
-<p class="note">Резервний час зберігається окремо. Для реального звукового сигналу у фоні потрібна підтримка системних будильників iOS — сама вебсторінка цього не гарантує.</p>
+  <div class="alarmhead">
+    <div class="heading">🔔 Резервний будильник</div>
+    <span class="pill gold">№ 2</span>
+  </div>
+  <p class="muted">Окремий час сигналу незалежно від статусу тривоги.</p>
+
+  <label for="backupTime">Час резервного сигналу</label>
+  <input type="time" id="backupTime" value="08:30">
+
+  <label for="backupSound">Мелодія резервного будильника</label>
+  <select id="backupSound">
+    <option value="urgent">Urgent — Наполегливий</option>
+    <option value="classic">Classic — Класичний</option>
+    <option value="digital">Digital — Цифровий</option>
+    <option value="sunrise">Sunrise — Світанок</option>
+    <option value="gentle">Gentle — Ніжний</option>
+  </select>
+  <button class="secondary" id="previewBackup">♫ Прослухати мелодію</button>
+
+  <label class="toggle">
+    <input type="checkbox" id="backupEnabled" checked>
+    Увімкнути резервний будильник
+  </label>
+
+  <p class="note">Резервний будильник має спрацьовувати незалежно від тривоги. Зараз це лише збережене налаштування: фоновий системний сигнал ще не підключений.</p>
 </section>
 
 <section class="card">
-<div class="heading">⚙️ Налаштування</div>
-<label for="city">Місто</label>
-<select id="city">
-<option value="Хмельницький">Хмельницький</option>
-</select>
-<button id="save">Зберегти обидва будильники</button>
-<button class="secondary" id="test">♫ Перевірити звук</button>
-<p class="note" id="message">Налаштування ще не збережені.</p>
+  <div class="heading">⚙️ Налаштування</div>
+
+  <label for="city">Місто</label>
+  <select id="city">
+    <option value="Хмельницький">Хмельницький</option>
+  </select>
+
+  <button id="save">Зберегти всі налаштування</button>
+  <button class="secondary" id="testSound">♫ Перевірити звук</button>
+  <div id="message">Вибери час і мелодії, а потім збережи налаштування.</div>
 </section>
 
 <footer>Зроблено з ♥ для України</footer>
 </main>
 
 <script>
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-function updateClock(){
- const d=new Date();
- $('clock').textContent=d.toLocaleTimeString('uk-UA',{
-  hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false
- });
- $('date').textContent=d.toLocaleDateString('uk-UA',{
-  weekday:'long',day:'numeric',month:'long'
- });
+function updateClock() {
+  const now = new Date();
+  $('clock').textContent = now.toLocaleTimeString('uk-UA', {
+    hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+  });
+  $('date').textContent = now.toLocaleDateString('uk-UA', {
+    weekday:'long', day:'numeric', month:'long'
+  });
 }
 updateClock();
-setInterval(updateClock,1000);
+setInterval(updateClock, 1000);
 
-function readSettings(){
- return {
-  smartTime:$('smartTime').value,
-  backupTime:$('backupTime').value,
-  backupEnabled:$('backupEnabled').checked,
-  city:$('city').value
- };
+const melodies = {
+  gentle: {
+    notes:[523,659,784,659,587,659,523],
+    gap:.28, type:'sine'
+  },
+  sunrise: {
+    notes:[392,494,587,659,784,659,784],
+    gap:.24, type:'sine'
+  },
+  classic: {
+    notes:[880,660,880,660,880,660,880],
+    gap:.24, type:'triangle'
+  },
+  digital: {
+    notes:[784,784,988,784,1175,988,784],
+    gap:.17, type:'square'
+  },
+  urgent: {
+    notes:[880,880,660,880,988,880,660,988],
+    gap:.14, type:'triangle'
+  }
+};
+
+let activeAudio = null;
+let activeTimeout = null;
+
+async function playMelody(name) {
+  stopMelody();
+
+  const melody = melodies[name];
+  if (!melody) return;
+
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) throw new Error('Audio not supported');
+
+    const ctx = new AudioCtx();
+    activeAudio = ctx;
+    if (ctx.state === 'suspended') await ctx.resume();
+
+    melody.notes.forEach((frequency, i) => {
+      const start = ctx.currentTime + .08 + i * melody.gap;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = melody.type;
+      osc.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(.001, start);
+      gain.gain.linearRampToValueAtTime(.15, start + .025);
+      gain.gain.setValueAtTime(.12, start + .10);
+      gain.gain.exponentialRampToValueAtTime(.001, start + .21);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + .22);
+    });
+
+    activeTimeout = setTimeout(async () => {
+      if (activeAudio === ctx) {
+        activeAudio = null;
+        try { await ctx.close(); } catch(e) {}
+      }
+    }, melody.notes.length * melody.gap * 1000 + 600);
+
+    $('message').textContent = '♫ Мелодія відтворюється. Це попереднє прослуховування, а не автоматичний сигнал будильника.';
+  } catch (e) {
+    $('message').textContent = 'Не вдалося відтворити звук. Перевір гучність і спробуй ще раз.';
+  }
 }
 
-try{
- const saved=JSON.parse(localStorage.getItem('smartAlarmSettings')||'null');
- if(saved){
-  $('smartTime').value=saved.smartTime||saved.alarm||'08:00';
-  $('backupTime').value=saved.backupTime||'08:30';
-  $('backupEnabled').checked=saved.backupEnabled!==false;
-  $('city').value=saved.city||'Хмельницький';
-  $('message').textContent='Знайдено збережені налаштування.';
- }
-}catch(e){}
+function stopMelody() {
+  clearTimeout(activeTimeout);
+  if (activeAudio) {
+    try { activeAudio.close(); } catch(e) {}
+    activeAudio = null;
+  }
+}
 
-$('save').addEventListener('click',()=>{
- try{
-  localStorage.setItem('smartAlarmSettings',JSON.stringify(readSettings()));
-  $('message').textContent='✓ Обидва налаштування збережено на цьому пристрої. Фонові сигнали ще не активні.';
- }catch(e){
-  $('message').textContent='Не вдалося зберегти налаштування. Спробуй відкрити сторінку в Safari.';
- }
+$('previewSmart').addEventListener('click', () => {
+  playMelody($('smartSound').value);
 });
 
-$('test').addEventListener('click',async()=>{
- let ctx;
- try{
-  const AudioContext=window.AudioContext||window.webkitAudioContext;
-  ctx=new AudioContext();
-  if(ctx.state==='suspended')await ctx.resume();
-  [0,.32,.64,1.05].forEach((t,i)=>{
-   const osc=ctx.createOscillator();
-   const gain=ctx.createGain();
-   osc.type='sine';
-   osc.frequency.value=i%2===0?880:660;
-   gain.gain.setValueAtTime(.001,ctx.currentTime+t);
-   gain.gain.exponentialRampToValueAtTime(.16,ctx.currentTime+t+.025);
-   gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+.23);
-   osc.connect(gain);
-   gain.connect(ctx.destination);
-   osc.start(ctx.currentTime+t);
-   osc.stop(ctx.currentTime+t+.25);
-  });
-  $('message').textContent='♫ Тестовий звук запущено. Це лише перевірка звуку, не встановлений будильник.';
-  setTimeout(()=>ctx.close(),1800);
- }catch(e){
-  if(ctx)try{ctx.close()}catch(_){}
-  $('message').textContent='Не вдалося відтворити звук. Перевір гучність і спробуй ще раз.';
- }
+$('previewBackup').addEventListener('click', () => {
+  playMelody($('backupSound').value);
+});
+
+$('testSound').addEventListener('click', () => {
+  playMelody($('backupEnabled').checked
+    ? $('backupSound').value
+    : $('smartSound').value);
+});
+
+function readSettings() {
+  return {
+    smartTime:$('smartTime').value,
+    smartSound:$('smartSound').value,
+    backupTime:$('backupTime').value,
+    backupSound:$('backupSound').value,
+    backupEnabled:$('backupEnabled').checked,
+    city:$('city').value
+  };
+}
+
+function loadSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('smartAlarmSettings') || 'null');
+    if (!saved) return;
+
+    $('smartTime').value = saved.smartTime || saved.alarm || '08:00';
+    $('smartSound').value = saved.smartSound || 'gentle';
+    $('backupTime').value = saved.backupTime || '08:30';
+    $('backupSound').value = saved.backupSound || 'urgent';
+    $('backupEnabled').checked = saved.backupEnabled !== false;
+    $('city').value = saved.city || 'Хмельницький';
+
+    $('message').textContent = 'Завантажено раніше збережені налаштування.';
+  } catch(e) {
+    $('message').textContent = 'Не вдалося прочитати збережені налаштування.';
+  }
+}
+loadSettings();
+
+$('save').addEventListener('click', () => {
+  try {
+    localStorage.setItem('smartAlarmSettings', JSON.stringify(readSettings()));
+    $('message').textContent = '✓ Час, мелодії та перемикач збережено на цьому пристрої. Автоматичні сигнали ще не активні.';
+  } catch(e) {
+    $('message').textContent = 'Не вдалося зберегти. Відкрий сайт у Safari та спробуй ще раз.';
+  }
 });
 </script>
 </body>
