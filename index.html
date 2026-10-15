@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0d14">
+<title>Smart Alarm UA</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0d14;color:#f7f8ff;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+main{max-width:440px;margin:auto;padding:28px 20px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;color:#a9aec5;font-size:13px}
+.logo{color:#fff;font-size:19px;font-weight:750}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#55dfaa;margin-right:7px}
+h1{font-size:42px;letter-spacing:-2px;line-height:1.08;margin:36px 0 8px}
+.sub{color:#9ba3bc;font-size:14px;line-height:1.5}
+.card{background:#151927;border:1px solid #272d40;border-radius:24px;padding:22px;margin-top:24px}
+.label{font-size:12px;color:#9ba3bc;text-transform:uppercase;letter-spacing:1.2px}
+.clock{font-size:56px;letter-spacing:-2px;font-weight:650;margin:12px 0}
+.status{display:flex;align-items:center;gap:10px;background:#1c2232;border-radius:14px;padding:14px;margin-top:20px}
+.statusIcon{font-size:24px}
+.status strong{display:block;font-size:14px}
+.status small{display:block;color:#9ba3bc;margin-top:5px}
+label{display:block;color:#c6cbe0;font-size:13px;margin:18px 0 8px}
+input,select{width:100%;padding:15px;background:#0d111c;color:white;border:1px solid #343b50;border-radius:13px;font-size:17px}
+button{width:100%;padding:16px;border:0;border-radius:14px;background:#a99bff;color:#111020;font-size:16px;font-weight:750;margin-top:16px}
+button.secondary{background:#252b3d;color:#fff}
+.note{font-size:12px;line-height:1.6;color:#939bb4;margin-top:18px}
+footer{text-align:center;color:#777f99;font-size:12px;margin-top:26px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div class="logo">◈ Smart Alarm UA</div>
+    <div><span class="dot"></span> Україна</div>
+  </div>
+  <h1>Прокидайся<br>розумніше.</h1>
+  <div class="sub">Твій ранок — під контролем. Навіть коли ніч перериває тривога.</div>
+
+  <section class="card">
+    <div class="label">Поточний час</div>
+    <div class="clock" id="clock">--:--:--</div>
+    <div class="sub" id="date"></div>
+    <div class="status">
+      <div class="statusIcon">🛡️</div>
+      <div><strong id="airTitle">Статус тривоги не підключено</strong><small id="airText">Це поки демонстраційний режим</small></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="label">Мій будильник</div>
+    <label for="alarm">Час пробудження</label>
+    <input id="alarm" type="time" value="08:00">
+    <label for="city">Місто</label>
+    <select id="city">
+      <option>Хмельницький</option>
+      <option>Київ</option>
+      <option>Львів</option>
+      <option>Тернопіль</option>
+      <option>Вінниця</option>
+      <option>Одеса</option>
+      <option>Дніпро</option>
+      <option>Харків</option>
+    </select>
+    <button id="save">Увімкнути будильник</button>
+    <button class="secondary" id="test">Перевірити звук</button>
+    <div class="note" id="message">Будильник ще не налаштовано.</div>
+  </section>
+
+  <div class="note">Важливо: це перша демонстраційна версія. Вона ще не отримує реальні дані тривог і не гарантує сигнал, коли сайт закритий або телефон заблокований. Не замінюй нею системний будильник iPhone.</div>
+  <footer>SMART ALARM UA · BETA 0.1</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function tick(){
+ const d=new Date();
+ $('clock').textContent=d.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ $('date').textContent=d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+}
+tick();setInterval(tick,1000);
+$('save').addEventListener('click',()=>{
+ const time=$('alarm').value;
+ if(!time){$('message').textContent='Спочатку обери час.';return;}
+ $('message').textContent='Час '+time+' збережено в цій відкритій сторінці. Це ще не системний будильник.';
+ $('save').textContent='Час обрано ✓';
+});
+$('test').addEventListener('click',async()=>{
+ try{
+  const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  await ctx.resume();
+  for(let i=0;i<3;i++){
+   const osc=ctx.createOscillator(),gain=ctx.createGain();
+   osc.type='sine';osc.frequency.value=880;
+   gain.gain.value=0.15;
+   osc.connect(gain);gain.connect(ctx.destination);
+   osc.start(ctx.currentTime+i*0.35);
+   osc.stop(ctx.currentTime+i*0.35+0.22);
+  }
+  $('message').textContent='Тестовий звук запущено. Перевір, чи чуєш його.';
+ }catch(e){$('message').textContent='Не вдалося запустити звук. Спробуй ще раз.';}
+});
+</script>
+</body>
+</html>
